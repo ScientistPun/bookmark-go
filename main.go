@@ -19,7 +19,7 @@ func main() {
 	config := lib.GlobalConfig
 
 	app := gin.Default()
-	gin.SetMode(gin.ReleaseMode)
+	//gin.SetMode(gin.ReleaseMode)
 
 	app.Use(ginsession.New())
 
