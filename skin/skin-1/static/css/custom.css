@@ -1,0 +1,21 @@
+
+#bookmark h4.text-gery{margin-right: 8px;}
+#bookmark .rows{padding-bottom: 30px;}
+
+#search-box{padding-bottom: 50px; margin: 0 auto;}
+@media (min-width: 1201px) {
+    #search-box{width:800px;}
+}
+@media (min-width: 769px) and (max-width: 1200px) {
+    #search-box{width:680px;}
+}
+@media (min-width: 481px) and (max-width: 768px) {
+    #search-box{width:400px;}
+}
+@media (max-width: 480px) {
+    #search-box{width:300px;}
+}
+ul.search-option{}
+ul.search-option li{outline: 0; display: inline-block; padding: 4px 8px; margin: 0 2px; cursor: pointer; border: 1px solid transparent; color: #666}
+ul.search-option li:hover{background: #e3e3e3}
+ul.search-option li.active{background: #2c2e2f; color: #fff; border-color: #2c2e2f}

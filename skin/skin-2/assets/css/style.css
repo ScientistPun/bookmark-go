@@ -1,0 +1,10 @@
+.ui[class*="center aligned"].container{max-width: 48rem !important;}
+
+header .ui[class*="center aligned"].container{padding: 4rem 0;}
+header img#logo{display: block; margin: 4rem auto;}
+
+main.ui.main {padding-bottom: 6rem;}
+main.ui.main .ui.attached.tab{min-height: 28rem}
+main.ui.main .ui.grid a{display: block}
+
+footer{width: 100%; height: 4rem; line-height: 4rem;}

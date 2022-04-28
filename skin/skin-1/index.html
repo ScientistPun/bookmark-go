@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bookmark</title>
+    <link rel="shortcut icon" href="/skin/skin-1/static/images/favicon.png">
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Arimo:400,700,400italic">
+    <link rel="stylesheet" href="/skin/skin-1/static/css/fonts/linecons/css/linecons.css">
+    <link rel="stylesheet" href="/skin/skin-1/static/css/fonts/fontawesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/skin/skin-1/static/css/bootstrap.css">
+    <link rel="stylesheet" href="/skin/skin-1/static/css/xenon-core.css">
+    <link rel="stylesheet" href="/skin/skin-1/static/css/xenon-components.css">
+    <link rel="stylesheet" href="/skin/skin-1/static/css/xenon-skins.css">
+    <link rel="stylesheet" href="/skin/skin-1/static/css/nav.css">
+    <link rel="stylesheet" href="/skin/skin-1/static/css/custom.css">
+    <script src="/skin/skin-1/static/js/jquery-1.11.1.min.js"></script>
+</head>
+
+<body class="page-body">
+    <!-- skin-white -->
+    <div class="page-container">
+        <div class="sidebar-menu toggle-others fixed">
+            <div class="sidebar-menu-inner">
+                <header class="logo-env">
+                    <!-- logo -->
+                    <div class="logo">
+                        <a href="/" class="logo-expanded">
+                            <img src="/skin/skin-1/static/images/logo@2x.png" width="100%" alt="" />
+                        </a>
+                        <a href="/" class="logo-collapsed">
+                            <img src="/skin/skin-1/static/images/logo-collapsed@2x.png" width="40" alt="" />
+                        </a>
+                    </div>
+                </header>
+                <ul id="main-menu" class="main-menu">
+                    <li> <a href="#search-box" class="smooth active"> <i class="fa-search"></i> <span class="title">搜索</span> </a> </li>
+                </ul>
+            </div>
+        </div>
+        <div class="main-content">
+            <nav class="navbar user-info-navbar" role="navigation">
+                <!-- User Info, Notifications and Menu Bar -->
+                <!-- Left links for user info navbar -->
+                <ul class="user-info-menu left-links list-inline list-unstyled">
+                    <li class="hidden-sm hidden-xs">
+                        <a href="#" data-toggle="sidebar">
+                            <i class="fa-bars"></i>
+                        </a>
+                    </li>
+                </ul>
+                <ul class="user-info-menu right-links list-inline list-unstyled">
+                    <li class="hidden-sm hidden-xs">
+                        <a href="/manage/setting" target="_blank">
+                            <i class="fa-gears"></i> 后台管理
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+
+            <div id="search-box">
+                <form action="" target="_blank" method="get">
+                    <ul class="search-option"></ul>
+                    <div class="input-group">
+                        <input type="text" class="form-control input-lg search-input" name="" placeholder="搜索。。。">
+                        <span class="input-group-btn"><button class="btn btn-lg btn-primary" type="submit"><i class="fa-search"></i></button></span>
+                    </div><!-- /input-group -->
+                </form>
+            </div>
+            <!-- 标签 -->
+            <div id="bookmark">
+            </div>
+            <!-- END 标签 -->
+
+            <!-- Main Footer -->
+            <!-- Choose between footer styles: "footer-type-1" or "footer-type-2" -->
+            <!-- Add class "sticky" to  always stick the footer to the end of page (if page contents is small) -->
+            <!-- Or class "fixed" to  always fix the footer to the end of page -->
+            <footer class="main-footer sticky footer-type-1">
+                <div class="footer-inner">
+                    <!-- Add your copyright text here -->
+                    <div class="footer-text">
+                        &copy; 2022 Bookmark Ver<span id="version">--</span>
+                        <br>
+                        Design by <a href="http://webstack.cc"><strong>Webstack</strong></a>(<a href="http://viggoz.com" target="_blank"><strong>Viggo</strong></a>) Build by ScientistPun
+                    </div>
+                    <!-- Go to Top Link, just add rel="go-top" to any link to add this functionality -->
+                    <div class="go-up">
+                        <a href="#" rel="go-top">
+                            <i class="fa-angle-up"></i>
+                        </a>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+    <!-- 锚点平滑移动 -->
+    <script type="text/javascript">
+        $(function () {
+            let async = function () {
+                // 第一步，新建个promise对象，所需的异步操作在其中进行
+                let prms = new Promise(function(resolve, reject){
+                    $.get("/api/config", "", function (ret) {
+                        $('#version').text(ret.Version)
+                    })
+                    $.get("/api/bookmark", "", function (ret) {
+                        let nav = ``
+                        let ctx = ``
+
+
+                        if (ret.search || ret.search.length > 1) {
+                            let searchOpt = ``
+                            ret.search.forEach((opt, i) => {
+                                if (i == 0) {
+                                    $('#search-box > form').attr("action", opt.Url)
+                                    $('#search-box .search-input').attr("name", opt.Param)
+                                    searchOpt += `<li class="active" data-url="${opt.Url}" data-param="${opt.Param}"> ${opt.Title} </li>`
+                                } else {
+                                    searchOpt += `<li data-url="${opt.Url}" data-param="${opt.Param}"> ${opt.Title} </li>`
+                                }
+                            })
+                            $('#search-box .search-option').html(searchOpt)
+                        }
+
+                        if (ret.bookmark || ret.bookmark.length > 1) {
+                            let bookmark = ret.bookmark
+                            for (let i = 0; i < bookmark.length; i++) {
+                                nav += `<li> <a href="#${bookmark[i].Name}" class="smooth"> <i class="${bookmark[i].Icon}"></i> <span class="title">${bookmark[i].Title}</span> </a> </li>`
+
+                                let rows = ""
+                                if (bookmark[i].Links.length >= 1) {
+                                    for (let j = 0; j < bookmark[i].Links.length; j++) {
+                                        var icon = bookmark[i].Links[j].Icon ? bookmark[i].Links[j].Icon:"/skin/skin-1/static/images/default-logo.png"
+                                        rows += `<div class="col-sm-3">
+                    <div class="xe-widget xe-conversations box2 label-info" onclick="window.open('${bookmark[i].Links[j].Url}', '_blank')" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="${bookmark[i].Links[j].Url}">
+                        <div class="xe-comment-entry">
+                            <a class="xe-user-img">
+                                <img data-src="${icon}" class="lozad img-icon" width="40">
+                            </a>
+
+                            <div class="xe-comment">
+                                <a href="#" class="xe-user-name overflowClip_1">
+                                    <strong>${bookmark[i].Links[j].Title}</strong>
+                                </a>
+                                <p class="overflowClip_2">${bookmark[i].Links[j].Desc}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>`
+                                    }
+                                }
+                                ctx += `<h4 class="text-gray"> <i class="fa-solid ${bookmark[i].Icon}" id="${bookmark[i].Name}"></i>${bookmark[i].Title} </h4>
+                <div class="row"> ${rows} </div>`
+                            }
+                            $('#main-menu').append(nav)
+                            $('#bookmark').html(ctx)
+                        }
+                        resolve(true)
+                    })
+                })
+                // 第三步，返回这个Promise对象
+                return prms
+            }
+
+            async().then(function (ret) {
+                //img lazy loaded
+                const observer = lozad();
+                observer.observe();
+
+                $(document).on('click', 'a.smooth', function(ev) {
+                    ev.preventDefault();
+
+                    public_vars.$mainMenu.add(public_vars.$sidebarProfile).toggleClass('mobile-is-visible');
+                    ps_destroy();
+                    $("html, body").animate({
+                        scrollTop: $($(this).attr("href")).offset().top - 30
+                    }, {
+                        duration: 500,
+                        easing: "swing"
+                    });
+                });
+
+                $(document).on('click', '.search-option > li', function(ev) {
+                    $('.search-option > li').removeClass("active")
+                    $(this).addClass("active")
+                    $('#search-box > form').attr("action", $(this).data('url'))
+                    $('#search-box .search-input').attr("name", $(this).data('param'))
+                });
+                return false;
+            });
+        })
+
+
+    var href = "";
+    var pos = 0;
+    $(document).on('click', 'a.smooth', function(e) {
+        $("#main-menu li").each(function() {
+            $(this).removeClass("active");
+        });
+        $(this).parent("li").addClass("active");
+        e.preventDefault();
+        href = $(this).attr("href");
+        pos = $(href).position().top - 30;
+    });
+    </script>
+    <!-- Bottom Scripts -->
+    <script src="/skin/skin-1/static/js/bootstrap.min.js"></script>
+    <script src="/skin/skin-1/static/js/TweenMax.min.js"></script>
+    <script src="/skin/skin-1/static/js/resizeable.js"></script>
+    <script src="/skin/skin-1/static/js/joinable.js"></script>
+    <script src="/skin/skin-1/static/js/xenon-api.js"></script>
+    <script src="/skin/skin-1/static/js/xenon-toggles.js"></script>
+    <!-- JavaScripts initializations and stuff -->
+    <script src="/skin/skin-1/static/js/xenon-custom.js"></script>
+    <script src="/skin/skin-1/static/js/lozad.js"></script>
+</body>
+</html>

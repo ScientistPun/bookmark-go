@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Bookmark</title>
+    <link rel="shortcut icon" href="/skin/skin-2/assets/img/favicon.png">
+    <link rel="stylesheet" type="text/css" href="/skin/skin-2/assets/lib/semantic/semantic.min.css">
+    <link rel="stylesheet" type="text/css" href="/skin/skin-2/assets/css/normalize.css">
+    <script src="/skin/skin-2/assets/js/jquery.min.js"></script>
+    <script src="/skin/skin-2/assets/lib/semantic/semantic.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="/skin/skin-2/assets/css/style.css">
+</head>
+<body>
+    <header class="ui header inverted segment">
+        <div class="ui center aligned container">
+            <img src="/skin/skin-2/assets/img/banner-dark.png" class="large mobile banner" id="logo" alt="">
+            <form action="" class="ui fluid right action left icon input" target="_blank" method="get">
+                <i class="search icon"></i>
+                <input type="text" placeholder="Search" name="" id="search-input">
+                <div class="ui compact selection dropdown">
+                    <i class="dropdown icon"></i>
+                    <div class="text">Search</div>
+                    <div class="menu"></div>
+                </div>
+            </form>
+        </div>
+    </header>
+    <main class="ui main text container">
+        <div class="ui top attached tabular menu">
+            <a class="item ${active}" data-tab="${tab.Name}">${tab.Title}</a>
+        </div>
+        <div class="ui bottom attached tab segment active" data-tab="first">
+            <div class="ui grid">
+                <div class="three wide column">
+                    <a href="" data-inverted="" data-tooltip="Add users to your feed" data-position="bottom center">
+                        <img class="ui middle aligned mini image" src="/skin/skin-2/assets/img/favicon.png">
+                        <span>Helen</span>
+                    </a>
+                </div>
+                <div class="three wide column">
+                    <a href="" data-inverted="" data-tooltip="Add users to your feed" data-position="bottom center">
+                        <img class="ui middle aligned mini image" src="/skin/skin-2/assets/img/favicon.png">
+                        <span>Helen</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+    <footer class="ui footer inverted vertical segment bottom fixed sticky">
+        <div class="ui center aligned container small">
+            <p>&copy; 2022 Power by Scientistpun </p>
+        </div>
+    </footer>
+</body>
+<script>
+    let async = function () {
+        // 第一步，新建个promise对象，所需的异步操作在其中进行
+        let prms = new Promise(function(resolve, reject){
+            $.get("/api/config", "", function (ret) {
+                $('#version').text(ret.Version)
+            })
+            $.get("/api/bookmark", "", function (ret) {
+                if (ret.search || ret.search.length > 1) {
+                    let selectHtm = ``
+                    ret.search.forEach((opt, i) => {
+                        if (i == 0) {
+                            $('.ui.selection .text').html(opt.Title)
+                            $('.ui.header form').attr('action', opt.Url)
+                            $('.ui.header #search-input').attr('name', opt.Param)
+                        }
+                        selectHtm += `<div class="item" data-url="${opt.Url}" data-param="${opt.Param}">${opt.Title}</div>`
+                    })
+                    $('.ui.selection .menu').html(selectHtm)
+                }
+
+                let tab = ``
+                let ctx = ``
+                if (ret.bookmark || ret.bookmark.length > 1) {
+                    ret.bookmark.forEach((tag, i) => {
+                        let active = i == 0 ? 'active':''
+                        tab += `<a class="item ${active}" data-tab="${tag.Name}">${tag.Title}</a>`
+
+                        ctx += ` <div class="ui bottom attached tab segment ${active}" data-tab="${tag.Name}"> <div class="ui grid">`
+
+                        tag.Links.forEach((link) => {
+                            let img = `<img class="ui middle aligned mini image" src="/skin/skin-2/assets/img/favicon.png">`
+                            if (link.Icon) {
+                                img = `<img class="ui middle aligned mini image" src="${link.Icon}">`
+                            }
+                            ctx += `<div class="five wide column">
+                                        <a href="${link.Url}" target="_blank" data-inverted data-tooltip="${link.Desc}" data-position="bottom center"> ${img} <span>${link.Title}</span> </a>
+                                    </div>`
+                        })
+                        ctx += `</div> </div>`
+                    })
+                    $('.ui.main').html(`<div class="ui top attached tabular menu">${tab}</div>${ctx}`)
+                }
+                resolve(true)
+            })
+        })
+        // 第三步，返回这个Promise对象
+        return prms
+    }
+
+    async().then(() => {
+        $('.ui.dropdown').dropdown();
+        $('.menu .item').tab();
+    })
+</script>
+</html>

@@ -1,0 +1,25 @@
+/**
+ *
+ * Apply your custom CSS here
+ *
+*/
+
+body {
+}
+
+ul{list-style: none; padding: 0;}
+
+a {
+}
+
+/* footer */
+footer.main-footer.fixed{left: 280px}
+
+/* form */
+.custom-form .form-group.row label.col-form-label{text-align: right; line-height: 32px;}
+
+/* tags item */
+ul.custom-tags{padding: 10px;}
+ul.custom-tags li{padding: 8px 12px; color: #333333; display: inline-block; line-height: 32px; background: #ededed; font-size: 14px; margin: 0 4px;}
+ul.custom-tags li:hover{background: #dedede; box-shadow: 1px 2px 1px #c4c4c4}
+ul.custom-tags li>a.btn-xs{margin-bottom: 0;}
